@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/layout/Header";
-import UserCard from "../components/common/UserCard";
+import Header from "@/components/layout/Header";
+import UserCard from "@/components/common/UserCard";
 
 interface APIUser {
   id: number;
