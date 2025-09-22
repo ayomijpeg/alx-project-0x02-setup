@@ -1,27 +1,14 @@
 // pages/users.tsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Header from "@/components/layout/Header";
 import UserCard from "@/components/common/UserCard";
-import { UserProps } from "@/interfaces";
+import { type UserProps } from "@/interfaces";
 
-const UsersPage: React.FC = () => {
-  const [users, setUsers] = useState<UserProps[]>([]);
+interface UsersPageProps {
+  users: UserProps[];
+}
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch("https://jsonplaceholder.typicode.com/users");
-        if (!res.ok) throw new Error("Failed to fetch users");
-        const data: UserProps[] = await res.json();
-        setUsers(data);
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
+const UsersPage: React.FC<UsersPageProps> = ({ users }) => {
   return (
     <>
       <Header />
@@ -40,5 +27,15 @@ const UsersPage: React.FC = () => {
     </>
   );
 };
+
+// ✅ Fetch at build time
+export async function getStaticProps() {
+  const res = await fetch("https://jsonplaceholder.typicode.com/users");
+  const users: UserProps[] = await res.json();
+
+  return {
+    props: { users },
+  };
+}
 
 export default UsersPage;
