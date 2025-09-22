@@ -1,24 +1,12 @@
-import React, { useEffect, useState } from "react";
 import Header from "@/components/layout/Header";
 import PostCard from "@/components/common/PostCard";
+import { type PostProps } from "@/interfaces";
 
-interface APIResponse {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
+interface PostsPageProps {
+  posts: PostProps[];
 }
 
-const PostsPage: React.FC = () => {
-  const [posts, setPosts] = useState<APIResponse[]>([]);
-
- useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/posts")
-    .then((ayos) => ayos.json())
-    .then((data) => setPosts(data))
-    .catch((error) => console.error("Error fetching posts:", error));
- }, []);
-
+const PostsPage: React.FC<PostsPageProps> = ({ posts }) => {
   return (
     <>
       <Header />
@@ -28,8 +16,9 @@ const PostsPage: React.FC = () => {
           <PostCard
             key={post.id}
             title={post.title}
-            content={post.body}
+            content={post.content}
             userId={post.userId}
+            id={post.id}
           />
         ))}
       </main>
@@ -38,3 +27,27 @@ const PostsPage: React.FC = () => {
 };
 
 export default PostsPage;
+
+// ✅ Static data fetching
+export async function getStaticProps() {
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=10");
+  const data = await res.json();
+
+  type ApiPost = {
+    userId: number;
+    id: number;
+    title: string;
+    body: string;
+  };
+
+  const posts: PostProps[] = data.map((post: ApiPost) => ({
+    userId: post.userId,
+    id: post.id,
+    title: post.title,
+    content: post.body,
+  }));
+
+  return {
+    props: { posts },
+  };
+}

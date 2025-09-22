@@ -1,26 +1,18 @@
+// pages/users.tsx
 import React, { useEffect, useState } from "react";
 import Header from "@/components/layout/Header";
 import UserCard from "@/components/common/UserCard";
-
-interface APIUser {
-  id: number;
-  name: string;
-  email: string;
-  address: {
-    street: string;
-    city: string;
-  };
-}
+import { UserProps } from "@/interfaces";
 
 const UsersPage: React.FC = () => {
-  const [users, setUsers] = useState<APIUser[]>([]);
+  const [users, setUsers] = useState<UserProps[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await fetch("https://jsonplaceholder.typicode.com/users");
         if (!res.ok) throw new Error("Failed to fetch users");
-        const data = await res.json();
+        const data: UserProps[] = await res.json();
         setUsers(data);
       } catch (err) {
         console.error("Error fetching users:", err);
@@ -38,6 +30,7 @@ const UsersPage: React.FC = () => {
         {users.map((user) => (
           <UserCard
             key={user.id}
+            id={user.id}
             name={user.name}
             email={user.email}
             address={user.address}
